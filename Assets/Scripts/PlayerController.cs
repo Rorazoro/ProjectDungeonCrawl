@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,13 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Animator animator;
-    private int direction = 2;
+
+    [SerializeField]
+    private float speed = 2.0f;
+    [SerializeField]
+    private Vector2 movement;
+    [SerializeField]
+    private int idleDirection;
 
     // Start is called before the first frame update
     void Start()
@@ -18,34 +25,36 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
+        CalcMovement();
     }
 
-    private void Move() {
+    private void FixedUpdate()
+    {
+        ExecuteMovement();
+    }
 
+    private void CalcMovement()
+    {
         //Get movement vector
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        Vector2 move = new Vector2(horizontal, vertical);
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.y = Input.GetAxisRaw("Vertical");
+        //idleDirection = GetIdleDirection();
 
-        direction = getDirection(move);
+        animator.SetFloat("horizontal", movement.x);
+        animator.SetFloat("vertical", movement.y);
+        animator.SetFloat("speed", movement.sqrMagnitude);
+        //animator.SetInteger("idleDirection", idleDirection);
     }
 
-    private int getDirection(Vector2 move) {
-        if (move.x > 0) {
-            return 1;
-        }
-        else if (move.x < 0) {
-            return 3;
-        }
-        else if (move.y > 0) {
-            return 0;
-        }
-        else if (move.y < 0) {
-            return 2;
-        }
-        else {
-            return direction;
-        }
+    // private int GetIdleDirection()
+    // {
+    //     if (movement.x > 0 ) {
+
+    //     }
+    // }
+
+    private void ExecuteMovement()
+    {
+        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
     }
 }
