@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Vector2 movement;
     [SerializeField]
-    private int idleDirection;
+    private Vector2 lookDirection = new Vector2(0, 0);
 
     // Start is called before the first frame update
     void Start()
@@ -38,20 +38,18 @@ public class PlayerController : MonoBehaviour
         //Get movement vector
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
-        //idleDirection = GetIdleDirection();
+        if (!Mathf.Approximately(movement.x, 0.0f) || !Mathf.Approximately(movement.y, 0.0f))
+        {
+            lookDirection.Set(movement.x, movement.y);
+            lookDirection.Normalize();
+        }
 
         animator.SetFloat("horizontal", movement.x);
         animator.SetFloat("vertical", movement.y);
         animator.SetFloat("speed", movement.sqrMagnitude);
-        //animator.SetInteger("idleDirection", idleDirection);
+        animator.SetFloat("lookHorizontal", lookDirection.x);
+        animator.SetFloat("lookVertical", lookDirection.y);
     }
-
-    // private int GetIdleDirection()
-    // {
-    //     if (movement.x > 0 ) {
-
-    //     }
-    // }
 
     private void ExecuteMovement()
     {
