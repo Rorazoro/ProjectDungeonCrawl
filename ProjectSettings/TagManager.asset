@@ -41,3 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Collidable
+    uniqueID: 1145689119
+    locked: 0
+  - name: Overhead
+    uniqueID: 2787024825
+    locked: 0
