@@ -2,57 +2,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    private Animator animator;
+    private Rigidbody2D _rb;
+    private Animator _animator;
 
     [SerializeField]
-    private float speed = 2.0f;
+    private float _speed = 20.0f;
     [SerializeField]
-    private Vector2 movement;
+    private Vector2 _movement;
     [SerializeField]
-    private Vector2 lookDirection = new Vector2(0, 0);
+    private Vector2 _lookDirection = new Vector2(0, 0);
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        CalcMovement();
+        Move();
     }
 
-    private void FixedUpdate()
+    public void OnMove(InputValue value)
     {
-        ExecuteMovement();
+        _movement = value.Get<Vector2>();
     }
 
-    private void CalcMovement()
+    private void Move()
     {
-        //Get movement vector
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
-        if (!Mathf.Approximately(movement.x, 0.0f) || !Mathf.Approximately(movement.y, 0.0f))
+        if (!Mathf.Approximately(_movement.x, 0.0f) || !Mathf.Approximately(_movement.y, 0.0f))
         {
-            lookDirection.Set(movement.x, movement.y);
-            lookDirection.Normalize();
+            _lookDirection.Set(_movement.x, _movement.y);
         }
 
-        animator.SetFloat("horizontal", movement.x);
-        animator.SetFloat("vertical", movement.y);
-        animator.SetFloat("speed", movement.sqrMagnitude);
-        animator.SetFloat("lookHorizontal", lookDirection.x);
-        animator.SetFloat("lookVertical", lookDirection.y);
-    }
+        _animator.SetFloat("horizontal", _movement.x);
+        _animator.SetFloat("vertical", _movement.y);
+        _animator.SetFloat("speed", _movement.sqrMagnitude);
+        _animator.SetFloat("lookHorizontal", _lookDirection.x);
+        _animator.SetFloat("lookVertical", _lookDirection.y);
 
-    private void ExecuteMovement()
-    {
-        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
+        _rb.MovePosition(_rb.position + _movement * _speed * Time.deltaTime);
     }
 }
